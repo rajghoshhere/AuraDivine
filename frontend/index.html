@@ -518,12 +518,8 @@ h2.on-dark em { color: rgba(255,255,255,0.45); }
 .checkout-modal {
   background: var(--white); border-radius: 8px; max-width: 440px; width: 100%;
   padding: 36px 32px 32px; position: relative; max-height: 90vh; overflow-y: auto;
-  animation: checkoutIn 0.25s ease; transition: max-width 0.2s ease;
+  animation: checkoutIn 0.25s ease;
 }
-.checkout-modal.cal-active { max-width: 720px; }
-.cal-embed-wrap { width: 100%; min-height: 480px; margin-top: 8px; }
-.cal-embed-fallback { text-align: center; margin-top: 10px; }
-.cal-embed-fallback a { color: var(--deep-lav); font-size: 12.5px; }
 @keyframes checkoutIn { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: none; } }
 .checkout-close {
   position: absolute; top: 14px; right: 14px; width: 32px; height: 32px;
@@ -1314,45 +1310,8 @@ footer {
     btn.disabled = true;
   }
 
-  // ══ CAL.COM EMBED (used to let clients pick a slot right after payment) ══
-  const CAL_LINK = 'team/banani-ghosh-auradivine';
-  let pendingBookingId = null;
-  (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
-  Cal("init", { origin: "https://cal.com" });
-
-  // Fires when the customer completes a slot booking inside the embedded calendar.
-  Cal("on", {
-    action: "bookingSuccessful",
-    callback: (e) => {
-      if (!pendingBookingId) return;
-      const data = e.detail && e.detail.data ? e.detail.data : {};
-      const booking = data.booking || data;
-      const sessionStart = booking.startTime || data.startTime || null;
-      const sessionEnd = booking.endTime || data.endTime || null;
-      const calBookingUid = booking.uid || data.uid || null;
-
-      fetch(`${API_BASE}/api/update-session-time`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          bookingId: pendingBookingId,
-          sessionStart,
-          sessionEnd,
-          calBookingUid,
-          calRawPayload: data
-        })
-      }).catch(err => console.error('Failed to save session time:', err));
-    }
-  });
-
-  function renderCalScheduler(name, email) {
-    Cal("inline", {
-      elementOrSelector: "#calBookingEmbed",
-      calLink: CAL_LINK,
-      config: { layout: "month_view", name: name || '', email: email || '' }
-    });
-    Cal("ui", { styles: { branding: { brandColor: "#D4AF37" } }, hideEventTypeDetails: false, layout: "month_view" });
-  }
+  // ══ GOOGLE CALENDAR BOOKING (shown after payment so clients can pick a slot) ══
+  const GOOGLE_CALENDAR_BOOKING_LINK = 'https://calendar.app.google/v6jnbfntKJJPqvm77';
 
   // ══ RAZORPAY PAYMENT INTEGRATION ══
   // Update PRODUCTION_API_BASE to your deployed Render backend URL before going live.
@@ -1419,13 +1378,11 @@ footer {
 
     document.getElementById('checkoutFormView').style.display = 'block';
     document.getElementById('checkoutStatusView').style.display = 'none';
-    document.querySelector('#checkoutOverlay .checkout-modal').classList.remove('cal-active');
     document.getElementById('checkoutOverlay').classList.add('open');
   }
 
   function closeCheckout() {
     document.getElementById('checkoutOverlay').classList.remove('open');
-    document.querySelector('#checkoutOverlay .checkout-modal').classList.remove('cal-active');
     activeCheckout = null;
   }
 
@@ -1534,22 +1491,19 @@ footer {
     }
   }
 
-  function showCalScheduler(name, email, packageName, bookingId) {
+  function showScheduleStep(name, email, packageName, bookingId) {
     document.getElementById('checkoutFormView').style.display = 'none';
-    document.querySelector('#checkoutOverlay .checkout-modal').classList.add('cal-active');
     const view = document.getElementById('checkoutStatusView');
     view.className = 'checkout-status success';
     view.innerHTML = `
       <div class="checkout-status-icon">✦</div>
       <h3>Payment Confirmed</h3>
-      <p>Your payment for <strong>${packageName}</strong> is confirmed (Booking ID: ${bookingId}). Now pick a time that works for you below — Banani will meet you then.</p>
-      <div class="cal-embed-wrap" id="calBookingEmbed"></div>
-      <p class="cal-embed-fallback">Calendar not loading? <a href="https://cal.com/${CAL_LINK}?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}" target="_blank" rel="noopener">Book directly on Cal.com</a></p>
-      <button type="button" class="checkout-submit" style="margin-top:16px" onclick="closeCheckout()">Done</button>
+      <p>Your payment for <strong>${packageName}</strong> is confirmed (Booking ID: ${bookingId}). A confirmation email is on its way to ${email}.</p>
+      <p>Now pick a time that works for you — Banani will meet you then.</p>
+      <a href="${GOOGLE_CALENDAR_BOOKING_LINK}" target="_blank" rel="noopener" class="checkout-submit" style="display:block;text-decoration:none;margin-top:8px">Schedule Your Session</a>
+      <button type="button" class="checkout-submit" style="margin-top:10px;background:transparent;color:var(--mid);border:1.5px solid var(--border)" onclick="closeCheckout()">I'll Schedule Later</button>
     `;
     view.style.display = 'block';
-    pendingBookingId = bookingId;
-    renderCalScheduler(name, email);
   }
 
   function handlePaymentSuccess(response, packageName, amount, name, email, phone) {
@@ -1575,7 +1529,7 @@ footer {
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          showCalScheduler(name, email, packageName, data.bookingId);
+          showScheduleStep(name, email, packageName, data.bookingId);
         } else {
           showCheckoutStatus({
             icon: '!',

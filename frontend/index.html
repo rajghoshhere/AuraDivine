@@ -1533,7 +1533,7 @@ footer {
     }
   }
 
-  function showScheduleStep(name, email, packageName, bookingId, sessionLabels) {
+  function showScheduleStep(name, email, packageName, bookingId, sessionLabels, paymentId) {
     document.getElementById('checkoutOverlay').classList.add('open');
     document.getElementById('checkoutFormView').style.display = 'none';
     const view = document.getElementById('checkoutStatusView');
@@ -1541,11 +1541,14 @@ footer {
 
     const labels = (sessionLabels && sessionLabels.length) ? sessionLabels : ['your session'];
     const multi = labels.length > 1;
-    const scheduleButtons = labels.map((label, i) => `
-      <a href="${GOOGLE_CALENDAR_BOOKING_LINK}" target="_blank" rel="noopener" class="checkout-submit" style="display:block;text-decoration:none;margin-top:${i === 0 ? 8 : 10}px">
+    const scheduleButtons = labels.map((label, i) => {
+      const sessionName = multi ? `${name} (Payment ${paymentId}, Session ${i + 1})` : name;
+      return `
+      <a href="${calendarLinkFor(sessionName, multi ? null : paymentId)}" target="_blank" rel="noopener" class="checkout-submit" style="display:block;text-decoration:none;margin-top:${i === 0 ? 8 : 10}px">
         Book Your Calendar Now${multi ? ` — Session ${i + 1} (${label})` : ''}
       </a>
-    `).join('');
+    `;
+    }).join('');
 
     view.innerHTML = `
       <div class="checkout-status-icon">✦</div>
@@ -1559,11 +1562,15 @@ footer {
   }
 
   function handlePaymentSuccess(response, packageName, amount, name, email, phone, sessionLabels) {
+    const paymentId = response.razorpay_payment_id;
+    const calendarLink = calendarLinkFor(name, paymentId);
+
     showCheckoutStatus({
       icon: '⟳',
       title: 'Confirming your payment…',
-      message: 'Please wait while we verify your payment.',
-      pending: true
+      message: `Your payment (ID: ${paymentId}) is being verified — this can take a moment. You don't have to wait for it: go ahead and book your session time now.`,
+      pending: true,
+      calendarLink
     });
 
     fetch(`${API_BASE}/api/verify-payment`, {
@@ -1582,13 +1589,14 @@ footer {
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          showScheduleStep(name, email, packageName, data.bookingId, sessionLabels);
+          showScheduleStep(name, email, packageName, data.bookingId, sessionLabels, paymentId);
         } else {
           showCheckoutStatus({
             icon: '!',
             title: 'Verification Failed',
-            message: 'Your payment could not be verified. If money was deducted, please contact support with your payment details.',
-            retry: true
+            message: 'Your payment could not be verified, but if money was deducted you can still book your session below — we\'ll reconcile the payment on our end. Otherwise contact support with your payment ID.',
+            retry: true,
+            calendarLink
           });
         }
       })
@@ -1597,8 +1605,9 @@ footer {
         showCheckoutStatus({
           icon: '!',
           title: 'Something Went Wrong',
-          message: 'We could not confirm your payment status. If money was deducted, please contact support.',
-          retry: true
+          message: 'We could not confirm your payment status, but if money was deducted you can still book your session below — we\'ll reconcile the payment on our end.',
+          retry: true,
+          calendarLink
         });
       });
   }

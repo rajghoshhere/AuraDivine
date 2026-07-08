@@ -523,8 +523,12 @@ h2.on-dark em { color: rgba(255,255,255,0.45); }
 .checkout-modal {
   background: var(--white); border-radius: 8px; max-width: 440px; width: 100%;
   padding: 36px 32px 32px; position: relative; max-height: 90vh; overflow-y: auto;
-  animation: checkoutIn 0.25s ease;
+  animation: checkoutIn 0.25s ease; transition: max-width 0.2s ease;
 }
+.checkout-modal.cal-active { max-width: 720px; }
+.cal-embed-wrap { width: 100%; min-height: 480px; margin-top: 8px; }
+.cal-embed-fallback { text-align: center; margin-top: 10px; }
+.cal-embed-fallback a { color: var(--deep-lav); font-size: 12.5px; }
 @keyframes checkoutIn { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: none; } }
 .checkout-close {
   position: absolute; top: 14px; right: 14px; width: 32px; height: 32px;
@@ -1321,14 +1325,67 @@ footer {
     btn.disabled = true;
   }
 
-  // ══ GOOGLE CALENDAR BOOKING (shown after payment so clients can pick a slot) ══
-  const GOOGLE_CALENDAR_BOOKING_LINK = 'https://calendar.app.google/v6jnbfntKJJPqvm77';
+  // ══ CAL.COM EMBED (real-time synced with Banani's Google Calendar; restricts
+  // bookable slot duration per package via separate event types) ══
+  (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+  Cal("init", { origin: "https://cal.com" });
 
-  // Appends the payment ID to the customer's name so Banani can match calendar
-  // invites back to payments, and prefills it on Google's booking form if supported.
-  function calendarLinkFor(name, paymentId) {
-    const nameWithPaymentId = paymentId ? `${name || 'Client'} (Payment ${paymentId})` : (name || '');
-    return `${GOOGLE_CALENDAR_BOOKING_LINK}?name=${encodeURIComponent(nameWithPaymentId)}`;
+  let activeSessionButton = null;
+  Cal("on", {
+    action: "bookingSuccessful",
+    callback: () => {
+      if (!activeSessionButton) return;
+      activeSessionButton.textContent = '✓ Booked';
+      activeSessionButton.disabled = true;
+      activeSessionButton.style.opacity = '0.6';
+      activeSessionButton.style.cursor = 'default';
+    }
+  });
+
+  function mountCalEmbed(calLink, name, email, paymentId, sessionSuffix) {
+    const container = document.getElementById('calBookingEmbed');
+    if (!container) return;
+    container.innerHTML = '';
+    const displayName = paymentId
+      ? `${name || 'Client'} (Payment ${paymentId}${sessionSuffix ? ', ' + sessionSuffix : ''})`
+      : (name || '');
+    Cal("inline", {
+      elementOrSelector: "#calBookingEmbed",
+      calLink,
+      config: { layout: "month_view", name: displayName, email: email || '' }
+    });
+    Cal("ui", { styles: { branding: { brandColor: "#D4AF37" } }, hideEventTypeDetails: false, layout: "month_view" });
+  }
+
+  // Renders one "Book Your Calendar Now" button per session (all pointing at the
+  // package's Cal.com event type, which enforces that package's slot duration),
+  // plus a shared embed container and a fallback link if the embed fails to load.
+  function renderSchedulingBlock(container, { labels, calLink, name, email, paymentId }) {
+    container.innerHTML = '';
+    const multi = labels.length > 1;
+
+    labels.forEach((label, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'checkout-submit';
+      btn.style.marginTop = i === 0 ? '8px' : '10px';
+      btn.textContent = `Book Your Calendar Now${multi ? ` — Session ${i + 1} (${label})` : ''}`;
+      btn.onclick = () => {
+        activeSessionButton = btn;
+        mountCalEmbed(calLink, name, email, paymentId, multi ? `Session ${i + 1}` : '');
+      };
+      container.appendChild(btn);
+    });
+
+    const embedWrap = document.createElement('div');
+    embedWrap.className = 'cal-embed-wrap';
+    embedWrap.id = 'calBookingEmbed';
+    container.appendChild(embedWrap);
+
+    const fallback = document.createElement('p');
+    fallback.className = 'cal-embed-fallback';
+    fallback.innerHTML = `Calendar not loading? <a href="https://cal.com/${calLink}" target="_blank" rel="noopener">Book directly on Cal.com</a>`;
+    container.appendChild(fallback);
   }
 
   // ══ RAZORPAY PAYMENT INTEGRATION ══
@@ -1339,20 +1396,20 @@ footer {
     : PRODUCTION_API_BASE;
 
   const PACKAGES = [
-    { amount: 1890, name: 'First Light', note: 'Single 90-min session', description: 'Single 90-min healing session', sessions: 1, sessionLabels: ['90-min session'] },
-    { amount: 4490, name: 'Returning Home', note: '3-session arc across 6 weeks', description: '3-session arc: 1×60min + 2×45min sessions across 6 weeks', sessions: 3, sessionLabels: ['60-min session', '45-min session', '45-min session'] },
-    { amount: 8790, name: 'Transformation', note: '6-session arc over 3 months', description: '6-session arc: 6×60min sessions over 3 months', sessions: 6, sessionLabels: Array(6).fill('60-min session') }
+    { amount: 1890, name: 'First Light', note: 'Single 90-min session', description: 'Single 90-min healing session', sessions: 1, sessionLabels: ['90-min session'], calLink: 'banani-ghosh-8wtlof/first-light' },
+    { amount: 4490, name: 'Returning Home', note: '3-session arc across 6 weeks', description: '3-session arc: 1×60min + 2×45min sessions across 6 weeks', sessions: 3, sessionLabels: ['60-min session', '45-min session', '45-min session'], calLink: 'banani-ghosh-8wtlof/1-hour-window' },
+    { amount: 8790, name: 'Transformation', note: '6-session arc over 3 months', description: '6-session arc: 6×60min sessions over 3 months', sessions: 6, sessionLabels: Array(6).fill('60-min session'), calLink: 'banani-ghosh-8wtlof/transformation' }
   ];
 
   // ₹1 test package — visible on the checkout page for verifying the live payment flow
   document.getElementById('testPkgCard').classList.add('show');
-  PACKAGES.push({ amount: 1, name: 'Test Session', note: '₹1 · Verifies live payment flow', description: '₹1 test transaction — verifies the live payment flow', sessions: 1, sessionLabels: ['test session'] });
+  PACKAGES.push({ amount: 1, name: 'Test Session', note: '₹1 · Verifies live payment flow', description: '₹1 test transaction — verifies the live payment flow', sessions: 1, sessionLabels: ['test session'], calLink: 'banani-ghosh-8wtlof/first-light' });
 
-  // Lets the test package simulate a real package's session count/labels while only charging ₹1
+  // Lets the test package simulate a real package's session count/labels/calLink while only charging ₹1
   const TEST_SIM_PACKAGES = {
-    first: { label: 'First Light', sessions: 1, sessionLabels: ['90-min session'] },
-    returning: { label: 'Returning Home', sessions: 3, sessionLabels: ['60-min session', '45-min session', '45-min session'] },
-    transformation: { label: 'Transformation', sessions: 6, sessionLabels: Array(6).fill('60-min session') }
+    first: { label: 'First Light', sessions: 1, sessionLabels: ['90-min session'], calLink: 'banani-ghosh-8wtlof/first-light' },
+    returning: { label: 'Returning Home', sessions: 3, sessionLabels: ['60-min session', '45-min session', '45-min session'], calLink: 'banani-ghosh-8wtlof/1-hour-window' },
+    transformation: { label: 'Transformation', sessions: 6, sessionLabels: Array(6).fill('60-min session'), calLink: 'banani-ghosh-8wtlof/transformation' }
   };
 
   function runTestCheckout() {
@@ -1363,7 +1420,8 @@ footer {
       'Test Session',
       `₹1 test transaction — simulates ${sim.label} (${sim.sessions} session${sim.sessions > 1 ? 's' : ''})`,
       sim.sessions,
-      sim.sessionLabels
+      sim.sessionLabels,
+      sim.calLink
     );
   }
 
@@ -1398,11 +1456,12 @@ footer {
   }
 
   // ── Checkout modal ──
-  function openCheckout(amount, packageName, description, sessionsOverride, sessionLabelsOverride) {
+  function openCheckout(amount, packageName, description, sessionsOverride, sessionLabelsOverride, calLinkOverride) {
     const pkg = PACKAGES.find(p => p.name === packageName);
     const sessions = sessionsOverride || (pkg ? pkg.sessions : 1);
     const sessionLabels = sessionLabelsOverride || (pkg ? pkg.sessionLabels : [description]);
-    activeCheckout = { amount, packageName, description, sessions, sessionLabels };
+    const calLink = calLinkOverride || (pkg ? pkg.calLink : null);
+    activeCheckout = { amount, packageName, description, sessions, sessionLabels, calLink };
 
     document.getElementById('checkoutTitle').textContent = packageName;
     document.getElementById('checkoutDescription').textContent = description;
@@ -1418,11 +1477,14 @@ footer {
 
     document.getElementById('checkoutFormView').style.display = 'block';
     document.getElementById('checkoutStatusView').style.display = 'none';
+    document.querySelector('#checkoutOverlay .checkout-modal').classList.remove('cal-active');
     document.getElementById('checkoutOverlay').classList.add('open');
   }
 
   function closeCheckout() {
     document.getElementById('checkoutOverlay').classList.remove('open');
+    document.querySelector('#checkoutOverlay .checkout-modal').classList.remove('cal-active');
+    activeSessionButton = null;
     activeCheckout = null;
   }
 
@@ -1438,7 +1500,7 @@ footer {
     el.classList.remove('show');
   }
 
-  function showCheckoutStatus({ icon, title, message, retry, pending, calendarLink }) {
+  function showCheckoutStatus({ icon, title, message, retry, pending, scheduling }) {
     document.getElementById('checkoutOverlay').classList.add('open');
     document.getElementById('checkoutFormView').style.display = 'none';
     const view = document.getElementById('checkoutStatusView');
@@ -1447,12 +1509,16 @@ footer {
       <div class="checkout-status-icon">${icon}</div>
       <h3>${title}</h3>
       <p>${message}</p>
-      ${calendarLink ? `<a href="${calendarLink}" target="_blank" rel="noopener" class="checkout-submit" style="display:block;text-decoration:none;margin-top:8px">Book Your Calendar Now</a>` : ''}
+      ${scheduling ? '<div id="schedulingBlock"></div>' : ''}
       ${pending ? '' : retry
         ? '<button type="button" class="checkout-submit" style="margin-top:10px" onclick="retryCheckout()">Try Again</button>'
         : '<button type="button" class="checkout-submit" style="margin-top:10px" onclick="closeCheckout()">Done</button>'}
     `;
     view.style.display = 'block';
+    if (scheduling) {
+      document.querySelector('#checkoutOverlay .checkout-modal').classList.add('cal-active');
+      renderSchedulingBlock(document.getElementById('schedulingBlock'), scheduling);
+    }
   }
 
   function retryCheckout() {
@@ -1474,7 +1540,7 @@ footer {
     if (!/^\d{10}$/.test(phone.replace(/\D/g, '').slice(-10))) { showCheckoutError('Please enter a valid 10-digit phone number.'); return; }
     const cleanPhone = phone.replace(/\D/g, '').slice(-10);
 
-    const { amount, packageName, description, sessionLabels } = activeCheckout;
+    const { amount, packageName, description, sessionLabels, calLink } = activeCheckout;
     const submitBtn = document.getElementById('checkoutSubmitBtn');
     submitBtn.disabled = true;
     submitBtn.textContent = 'Processing…';
@@ -1514,7 +1580,7 @@ footer {
         notes: { package_name: packageName, package_amount: amount },
         theme: { color: '#D4AF37' },
         handler: function(response) {
-          handlePaymentSuccess(response, packageName, amount, name, email, cleanPhone, sessionLabels);
+          handlePaymentSuccess(response, packageName, amount, name, email, cleanPhone, sessionLabels, calLink);
         },
         modal: {
           ondismiss: function() {
@@ -1533,7 +1599,7 @@ footer {
     }
   }
 
-  function showScheduleStep(name, email, packageName, bookingId, sessionLabels, paymentId) {
+  function showScheduleStep(name, email, packageName, bookingId, sessionLabels, paymentId, calLink) {
     document.getElementById('checkoutOverlay').classList.add('open');
     document.getElementById('checkoutFormView').style.display = 'none';
     const view = document.getElementById('checkoutStatusView');
@@ -1541,36 +1607,34 @@ footer {
 
     const labels = (sessionLabels && sessionLabels.length) ? sessionLabels : ['your session'];
     const multi = labels.length > 1;
-    const scheduleButtons = labels.map((label, i) => {
-      const sessionName = multi ? `${name} (Payment ${paymentId}, Session ${i + 1})` : name;
-      return `
-      <a href="${calendarLinkFor(sessionName, multi ? null : paymentId)}" target="_blank" rel="noopener" class="checkout-submit" style="display:block;text-decoration:none;margin-top:${i === 0 ? 8 : 10}px">
-        Book Your Calendar Now${multi ? ` — Session ${i + 1} (${label})` : ''}
-      </a>
-    `;
-    }).join('');
 
     view.innerHTML = `
       <div class="checkout-status-icon">✦</div>
       <h3>Payment Confirmed</h3>
       <p>Your payment for <strong>${packageName}</strong> is confirmed (Booking ID: ${bookingId}). A confirmation email is on its way to ${email}.</p>
       <p>${multi ? `Schedule each of your ${labels.length} sessions below` : 'Now pick a time that works for you'} — Banani will meet you then.</p>
-      ${scheduleButtons}
+      <div id="schedulingBlock"></div>
       <button type="button" class="checkout-submit" style="margin-top:10px;background:transparent;color:var(--mid);border:1.5px solid var(--border)" onclick="closeCheckout()">I'll Schedule Later</button>
     `;
     view.style.display = 'block';
+
+    if (calLink) {
+      document.querySelector('#checkoutOverlay .checkout-modal').classList.add('cal-active');
+      renderSchedulingBlock(document.getElementById('schedulingBlock'), { labels, calLink, name, email, paymentId });
+    }
   }
 
-  function handlePaymentSuccess(response, packageName, amount, name, email, phone, sessionLabels) {
+  function handlePaymentSuccess(response, packageName, amount, name, email, phone, sessionLabels, calLink) {
     const paymentId = response.razorpay_payment_id;
-    const calendarLink = calendarLinkFor(name, paymentId);
+    const labels = (sessionLabels && sessionLabels.length) ? sessionLabels : ['your session'];
+    const scheduling = calLink ? { labels, calLink, name, email, paymentId } : null;
 
     showCheckoutStatus({
       icon: '⟳',
       title: 'Confirming your payment…',
       message: `Your payment (ID: ${paymentId}) is being verified — this can take a moment. You don't have to wait for it: go ahead and book your session time now.`,
       pending: true,
-      calendarLink
+      scheduling
     });
 
     fetch(`${API_BASE}/api/verify-payment`, {
@@ -1589,14 +1653,14 @@ footer {
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          showScheduleStep(name, email, packageName, data.bookingId, sessionLabels, paymentId);
+          showScheduleStep(name, email, packageName, data.bookingId, sessionLabels, paymentId, calLink);
         } else {
           showCheckoutStatus({
             icon: '!',
             title: 'Verification Failed',
             message: 'Your payment could not be verified, but if money was deducted you can still book your session below — we\'ll reconcile the payment on our end. Otherwise contact support with your payment ID.',
             retry: true,
-            calendarLink
+            scheduling
           });
         }
       })
@@ -1607,7 +1671,7 @@ footer {
           title: 'Something Went Wrong',
           message: 'We could not confirm your payment status, but if money was deducted you can still book your session below — we\'ll reconcile the payment on our end.',
           retry: true,
-          calendarLink
+          scheduling
         });
       });
   }

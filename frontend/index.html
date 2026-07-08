@@ -1562,9 +1562,10 @@ footer {
       });
   }
 
-  document.getElementById('checkoutOverlay').addEventListener('click', e => {
-    if (e.target.id === 'checkoutOverlay') closeCheckout();
-  });
+  // Note: no click-outside-to-close on checkoutOverlay — Razorpay's own checkout
+  // overlay sits on top of ours, and a stray click as it closes after a successful
+  // payment can land on our backdrop and trigger closeCheckout(), wiping out the
+  // post-payment scheduling step before the customer ever sees it.
   document.getElementById('pkgPickOverlay').addEventListener('click', e => {
     if (e.target.id === 'pkgPickOverlay') closePkgPicker();
   });

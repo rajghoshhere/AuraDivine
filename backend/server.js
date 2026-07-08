@@ -230,6 +230,33 @@ async function sendBookingNotification(email, phone, packageName, amount) {
   }
 }
 
+// ══ UPDATE SESSION TIME (called after the client picks a Cal.com slot) ══
+app.post('/api/update-session-time', async (req, res) => {
+  try {
+    const { bookingId, sessionStart, sessionEnd, calBookingUid, calRawPayload } = req.body;
+
+    if (!bookingId) {
+      return res.status(400).json({ success: false, message: 'bookingId is required' });
+    }
+
+    const { error } = await supabase
+      .from(BOOKINGS_TABLE)
+      .update({ sessionStart, sessionEnd, calBookingUid, calRawPayload })
+      .eq('id', bookingId);
+
+    if (error) throw error;
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Update session time error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to save session time',
+      error: error.message
+    });
+  }
+});
+
 // ══ GET ALL BOOKINGS (for admin dashboard - protect with auth) ══
 app.get('/api/bookings', async (req, res) => {
   // TODO: Add authentication middleware here

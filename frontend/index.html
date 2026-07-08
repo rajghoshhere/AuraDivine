@@ -1316,8 +1316,34 @@ footer {
 
   // ══ CAL.COM EMBED (used to let clients pick a slot right after payment) ══
   const CAL_LINK = 'team/banani-ghosh-auradivine';
+  let pendingBookingId = null;
   (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
   Cal("init", { origin: "https://cal.com" });
+
+  // Fires when the customer completes a slot booking inside the embedded calendar.
+  Cal("on", {
+    action: "bookingSuccessful",
+    callback: (e) => {
+      if (!pendingBookingId) return;
+      const data = e.detail && e.detail.data ? e.detail.data : {};
+      const booking = data.booking || data;
+      const sessionStart = booking.startTime || data.startTime || null;
+      const sessionEnd = booking.endTime || data.endTime || null;
+      const calBookingUid = booking.uid || data.uid || null;
+
+      fetch(`${API_BASE}/api/update-session-time`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingId: pendingBookingId,
+          sessionStart,
+          sessionEnd,
+          calBookingUid,
+          calRawPayload: data
+        })
+      }).catch(err => console.error('Failed to save session time:', err));
+    }
+  });
 
   function renderCalScheduler(name, email) {
     Cal("inline", {
@@ -1522,6 +1548,7 @@ footer {
       <button type="button" class="checkout-submit" style="margin-top:16px" onclick="closeCheckout()">Done</button>
     `;
     view.style.display = 'block';
+    pendingBookingId = bookingId;
     renderCalScheduler(name, email);
   }
 

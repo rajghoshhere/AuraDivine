@@ -1431,7 +1431,7 @@ footer {
     el.classList.remove('show');
   }
 
-  function showCheckoutStatus({ icon, title, message, retry }) {
+  function showCheckoutStatus({ icon, title, message, retry, pending }) {
     document.getElementById('checkoutOverlay').classList.add('open');
     document.getElementById('checkoutFormView').style.display = 'none';
     const view = document.getElementById('checkoutStatusView');
@@ -1440,7 +1440,7 @@ footer {
       <div class="checkout-status-icon">${icon}</div>
       <h3>${title}</h3>
       <p>${message}</p>
-      ${retry
+      ${pending ? '' : retry
         ? '<button type="button" class="checkout-submit" onclick="retryCheckout()">Try Again</button>'
         : '<button type="button" class="checkout-submit" onclick="closeCheckout()">Done</button>'}
     `;
@@ -1535,7 +1535,7 @@ footer {
     const multi = labels.length > 1;
     const scheduleButtons = labels.map((label, i) => `
       <a href="${GOOGLE_CALENDAR_BOOKING_LINK}" target="_blank" rel="noopener" class="checkout-submit" style="display:block;text-decoration:none;margin-top:${i === 0 ? 8 : 10}px">
-        Schedule Session ${i + 1}${multi ? ` — ${label}` : ''}
+        Book Your Calendar Now${multi ? ` — Session ${i + 1} (${label})` : ''}
       </a>
     `).join('');
 
@@ -1554,7 +1554,8 @@ footer {
     showCheckoutStatus({
       icon: '⟳',
       title: 'Confirming your payment…',
-      message: 'Please wait while we verify your payment.'
+      message: 'Please wait while we verify your payment.',
+      pending: true
     });
 
     fetch(`${API_BASE}/api/verify-payment`, {

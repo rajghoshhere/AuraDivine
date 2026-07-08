@@ -1324,6 +1324,13 @@ footer {
   // ══ GOOGLE CALENDAR BOOKING (shown after payment so clients can pick a slot) ══
   const GOOGLE_CALENDAR_BOOKING_LINK = 'https://calendar.app.google/v6jnbfntKJJPqvm77';
 
+  // Appends the payment ID to the customer's name so Banani can match calendar
+  // invites back to payments, and prefills it on Google's booking form if supported.
+  function calendarLinkFor(name, paymentId) {
+    const nameWithPaymentId = paymentId ? `${name || 'Client'} (Payment ${paymentId})` : (name || '');
+    return `${GOOGLE_CALENDAR_BOOKING_LINK}?name=${encodeURIComponent(nameWithPaymentId)}`;
+  }
+
   // ══ RAZORPAY PAYMENT INTEGRATION ══
   // Update PRODUCTION_API_BASE to your deployed Render backend URL before going live.
   const PRODUCTION_API_BASE = 'https://auradivine.onrender.com';
@@ -1431,7 +1438,7 @@ footer {
     el.classList.remove('show');
   }
 
-  function showCheckoutStatus({ icon, title, message, retry, pending }) {
+  function showCheckoutStatus({ icon, title, message, retry, pending, calendarLink }) {
     document.getElementById('checkoutOverlay').classList.add('open');
     document.getElementById('checkoutFormView').style.display = 'none';
     const view = document.getElementById('checkoutStatusView');
@@ -1440,9 +1447,10 @@ footer {
       <div class="checkout-status-icon">${icon}</div>
       <h3>${title}</h3>
       <p>${message}</p>
+      ${calendarLink ? `<a href="${calendarLink}" target="_blank" rel="noopener" class="checkout-submit" style="display:block;text-decoration:none;margin-top:8px">Book Your Calendar Now</a>` : ''}
       ${pending ? '' : retry
-        ? '<button type="button" class="checkout-submit" onclick="retryCheckout()">Try Again</button>'
-        : '<button type="button" class="checkout-submit" onclick="closeCheckout()">Done</button>'}
+        ? '<button type="button" class="checkout-submit" style="margin-top:10px" onclick="retryCheckout()">Try Again</button>'
+        : '<button type="button" class="checkout-submit" style="margin-top:10px" onclick="closeCheckout()">Done</button>'}
     `;
     view.style.display = 'block';
   }

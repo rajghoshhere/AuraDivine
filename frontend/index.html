@@ -1321,16 +1321,16 @@ footer {
     : PRODUCTION_API_BASE;
 
   const PACKAGES = [
-    { amount: 1890, name: 'First Light', note: 'Single 90-min session', description: 'Single 90-min healing session' },
-    { amount: 4490, name: 'Returning Home', note: '3-session arc across 6 weeks', description: '3-session arc: 1×60min + 2×45min sessions across 6 weeks' },
-    { amount: 8790, name: 'Transformation', note: '6-session arc over 3 months', description: '6-session arc: 6×60min sessions over 3 months' }
+    { amount: 1890, name: 'First Light', note: 'Single 90-min session', description: 'Single 90-min healing session', sessions: 1, sessionLabels: ['90-min session'] },
+    { amount: 4490, name: 'Returning Home', note: '3-session arc across 6 weeks', description: '3-session arc: 1×60min + 2×45min sessions across 6 weeks', sessions: 3, sessionLabels: ['60-min session', '45-min session', '45-min session'] },
+    { amount: 8790, name: 'Transformation', note: '6-session arc over 3 months', description: '6-session arc: 6×60min sessions over 3 months', sessions: 6, sessionLabels: Array(6).fill('60-min session') }
   ];
 
   // ₹1 test package — visible on the checkout page for verifying the live payment flow
   document.getElementById('testPkgCard').classList.add('show');
-  PACKAGES.push({ amount: 1, name: 'Test Session', note: '₹1 · Verifies live payment flow', description: '₹1 test transaction — verifies the live payment flow' });
+  PACKAGES.push({ amount: 1, name: 'Test Session', note: '₹1 · Verifies live payment flow', description: '₹1 test transaction — verifies the live payment flow', sessions: 1, sessionLabels: ['test session'] });
 
-  let activeCheckout = null; // { amount, packageName, description }
+  let activeCheckout = null; // { amount, packageName, description, sessions, sessionLabels }
 
   // ── Package picker modal (used by the main "Book Your Session" CTA) ──
   function showPackageSelection() {
@@ -1362,7 +1362,10 @@ footer {
 
   // ── Checkout modal ──
   function openCheckout(amount, packageName, description) {
-    activeCheckout = { amount, packageName, description };
+    const pkg = PACKAGES.find(p => p.name === packageName);
+    const sessions = pkg ? pkg.sessions : 1;
+    const sessionLabels = pkg ? pkg.sessionLabels : [description];
+    activeCheckout = { amount, packageName, description, sessions, sessionLabels };
 
     document.getElementById('checkoutTitle').textContent = packageName;
     document.getElementById('checkoutDescription').textContent = description;
@@ -1432,7 +1435,7 @@ footer {
     if (!/^\d{10}$/.test(phone.replace(/\D/g, '').slice(-10))) { showCheckoutError('Please enter a valid 10-digit phone number.'); return; }
     const cleanPhone = phone.replace(/\D/g, '').slice(-10);
 
-    const { amount, packageName, description } = activeCheckout;
+    const { amount, packageName, description, sessionLabels } = activeCheckout;
     const submitBtn = document.getElementById('checkoutSubmitBtn');
     submitBtn.disabled = true;
     submitBtn.textContent = 'Processing…';
@@ -1472,7 +1475,7 @@ footer {
         notes: { package_name: packageName, package_amount: amount },
         theme: { color: '#D4AF37' },
         handler: function(response) {
-          handlePaymentSuccess(response, packageName, amount, name, email, cleanPhone);
+          handlePaymentSuccess(response, packageName, amount, name, email, cleanPhone, sessionLabels);
         },
         modal: {
           ondismiss: function() {
@@ -1491,22 +1494,31 @@ footer {
     }
   }
 
-  function showScheduleStep(name, email, packageName, bookingId) {
+  function showScheduleStep(name, email, packageName, bookingId, sessionLabels) {
     document.getElementById('checkoutFormView').style.display = 'none';
     const view = document.getElementById('checkoutStatusView');
     view.className = 'checkout-status success';
+
+    const labels = (sessionLabels && sessionLabels.length) ? sessionLabels : ['your session'];
+    const multi = labels.length > 1;
+    const scheduleButtons = labels.map((label, i) => `
+      <a href="${GOOGLE_CALENDAR_BOOKING_LINK}" target="_blank" rel="noopener" class="checkout-submit" style="display:block;text-decoration:none;margin-top:${i === 0 ? 8 : 10}px">
+        Schedule Session ${i + 1}${multi ? ` — ${label}` : ''}
+      </a>
+    `).join('');
+
     view.innerHTML = `
       <div class="checkout-status-icon">✦</div>
       <h3>Payment Confirmed</h3>
       <p>Your payment for <strong>${packageName}</strong> is confirmed (Booking ID: ${bookingId}). A confirmation email is on its way to ${email}.</p>
-      <p>Now pick a time that works for you — Banani will meet you then.</p>
-      <a href="${GOOGLE_CALENDAR_BOOKING_LINK}" target="_blank" rel="noopener" class="checkout-submit" style="display:block;text-decoration:none;margin-top:8px">Schedule Your Session</a>
+      <p>${multi ? `Schedule each of your ${labels.length} sessions below` : 'Now pick a time that works for you'} — Banani will meet you then.</p>
+      ${scheduleButtons}
       <button type="button" class="checkout-submit" style="margin-top:10px;background:transparent;color:var(--mid);border:1.5px solid var(--border)" onclick="closeCheckout()">I'll Schedule Later</button>
     `;
     view.style.display = 'block';
   }
 
-  function handlePaymentSuccess(response, packageName, amount, name, email, phone) {
+  function handlePaymentSuccess(response, packageName, amount, name, email, phone, sessionLabels) {
     showCheckoutStatus({
       icon: '⟳',
       title: 'Confirming your payment…',
@@ -1529,7 +1541,7 @@ footer {
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          showScheduleStep(name, email, packageName, data.bookingId);
+          showScheduleStep(name, email, packageName, data.bookingId, sessionLabels);
         } else {
           showCheckoutStatus({
             icon: '!',

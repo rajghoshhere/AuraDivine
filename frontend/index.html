@@ -1432,6 +1432,7 @@ footer {
   }
 
   function showCheckoutStatus({ icon, title, message, retry }) {
+    document.getElementById('checkoutOverlay').classList.add('open');
     document.getElementById('checkoutFormView').style.display = 'none';
     const view = document.getElementById('checkoutStatusView');
     view.className = `checkout-status ${retry ? 'error' : 'success'}`;
@@ -1525,6 +1526,7 @@ footer {
   }
 
   function showScheduleStep(name, email, packageName, bookingId, sessionLabels) {
+    document.getElementById('checkoutOverlay').classList.add('open');
     document.getElementById('checkoutFormView').style.display = 'none';
     const view = document.getElementById('checkoutStatusView');
     view.className = 'checkout-status success';
@@ -1602,4 +1604,20 @@ footer {
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') { closeCheckout(); closePkgPicker(); }
   });
+
+  // Surface any otherwise-silent JS error on screen while checkout is mid-flow,
+  // instead of the modal just going blank/closing with no explanation.
+  function reportCheckoutCrash(message) {
+    const overlay = document.getElementById('checkoutOverlay');
+    if (overlay && (overlay.classList.contains('open') || activeCheckout)) {
+      showCheckoutStatus({
+        icon: '!',
+        title: 'Unexpected Error',
+        message: `Something broke after your payment: ${message}. Please screenshot this and contact support — your payment may still have gone through.`,
+        retry: true
+      });
+    }
+  }
+  window.addEventListener('error', e => reportCheckoutCrash(e.message));
+  window.addEventListener('unhandledrejection', e => reportCheckoutCrash((e.reason && e.reason.message) || e.reason));
 </script>

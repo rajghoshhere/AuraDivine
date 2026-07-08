@@ -1341,11 +1341,9 @@ footer {
     { amount: 8790, name: 'Transformation', note: '6-session arc over 3 months', description: '6-session arc: 6×60min sessions over 3 months' }
   ];
 
-  // Show the ₹1 test package only when explicitly requested via ?test=1
-  if (new URLSearchParams(window.location.search).get('test') === '1') {
-    document.getElementById('testPkgCard').classList.add('show');
-    PACKAGES.push({ amount: 1, name: 'Test Session', note: '₹1 · Verifies live payment flow', description: '₹1 test transaction — verifies the live payment flow' });
-  }
+  // ₹1 test package — visible on the checkout page for verifying the live payment flow
+  document.getElementById('testPkgCard').classList.add('show');
+  PACKAGES.push({ amount: 1, name: 'Test Session', note: '₹1 · Verifies live payment flow', description: '₹1 test transaction — verifies the live payment flow' });
 
   let activeCheckout = null; // { amount, packageName, description }
 

@@ -507,6 +507,11 @@ h2.on-dark em { color: rgba(255,255,255,0.45); }
   letter-spacing: 0.16em; text-transform: uppercase; padding: 4px 18px;
   border-radius: 100px; white-space: nowrap;
 }
+.test-sim-options { margin-bottom: 20px; }
+.test-sim-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--mid); margin-bottom: 8px; }
+.test-sim-option { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--charcoal); padding: 6px 0; cursor: pointer; }
+.test-sim-option input { accent-color: var(--gold-dk); }
+.test-sim-option span { color: var(--mid); font-size: 11.5px; }
 
 /* ── CHECKOUT MODAL ── */
 .checkout-overlay {
@@ -1108,12 +1113,18 @@ footer {
         <div class="pkg-name">Test Session</div>
         <div class="pkg-price">₹1</div>
         <div class="pkg-note">Used to verify the live payment flow end-to-end</div>
+        <div class="test-sim-options">
+          <div class="test-sim-label">Simulate package:</div>
+          <label class="test-sim-option"><input type="radio" name="testPkgSim" value="first" checked> First Light <span>(1 session)</span></label>
+          <label class="test-sim-option"><input type="radio" name="testPkgSim" value="returning"> Returning Home <span>(3 sessions)</span></label>
+          <label class="test-sim-option"><input type="radio" name="testPkgSim" value="transformation"> Transformation <span>(6 sessions)</span></label>
+        </div>
         <ul class="pkg-feats">
           <li>Confirms live Razorpay checkout works</li>
           <li>Confirms payment verification &amp; emails</li>
           <li>Not a real booking — for testing only</li>
         </ul>
-        <button onclick="openCheckout(1, 'Test Session', '₹1 test transaction — verifies the live payment flow')" class="btn-pkg btn-pkg-line">Run ₹1 Test</button>
+        <button onclick="runTestCheckout()" class="btn-pkg btn-pkg-line">Run ₹1 Test</button>
       </div>
     </div>
   </div>
@@ -1330,6 +1341,25 @@ footer {
   document.getElementById('testPkgCard').classList.add('show');
   PACKAGES.push({ amount: 1, name: 'Test Session', note: '₹1 · Verifies live payment flow', description: '₹1 test transaction — verifies the live payment flow', sessions: 1, sessionLabels: ['test session'] });
 
+  // Lets the test package simulate a real package's session count/labels while only charging ₹1
+  const TEST_SIM_PACKAGES = {
+    first: { label: 'First Light', sessions: 1, sessionLabels: ['90-min session'] },
+    returning: { label: 'Returning Home', sessions: 3, sessionLabels: ['60-min session', '45-min session', '45-min session'] },
+    transformation: { label: 'Transformation', sessions: 6, sessionLabels: Array(6).fill('60-min session') }
+  };
+
+  function runTestCheckout() {
+    const selected = document.querySelector('input[name="testPkgSim"]:checked').value;
+    const sim = TEST_SIM_PACKAGES[selected];
+    openCheckout(
+      1,
+      'Test Session',
+      `₹1 test transaction — simulates ${sim.label} (${sim.sessions} session${sim.sessions > 1 ? 's' : ''})`,
+      sim.sessions,
+      sim.sessionLabels
+    );
+  }
+
   let activeCheckout = null; // { amount, packageName, description, sessions, sessionLabels }
 
   // ── Package picker modal (used by the main "Book Your Session" CTA) ──
@@ -1361,10 +1391,10 @@ footer {
   }
 
   // ── Checkout modal ──
-  function openCheckout(amount, packageName, description) {
+  function openCheckout(amount, packageName, description, sessionsOverride, sessionLabelsOverride) {
     const pkg = PACKAGES.find(p => p.name === packageName);
-    const sessions = pkg ? pkg.sessions : 1;
-    const sessionLabels = pkg ? pkg.sessionLabels : [description];
+    const sessions = sessionsOverride || (pkg ? pkg.sessions : 1);
+    const sessionLabels = sessionLabelsOverride || (pkg ? pkg.sessionLabels : [description]);
     activeCheckout = { amount, packageName, description, sessions, sessionLabels };
 
     document.getElementById('checkoutTitle').textContent = packageName;

@@ -1125,6 +1125,20 @@ footer {
       <p class="sub centered" style="margin-bottom:0">All prices in Indian Rupees. UPI, Net Banking, Cards &amp; Wallets accepted.</p>
     </div>
     <div class="pkg-grid fi">
+      <!-- Basic Healing -->
+      <div class="pkg-card">
+        <div class="pkg-tier">Introductory Offer</div>
+        <h3 class="pkg-name">Basic Healing</h3>
+        <div class="pkg-price">₹1</div>
+        <div class="pkg-note">A short introductory energy session — begin for just ₹1</div>
+        <ul class="pkg-feats">
+          <li>20-minute introductory session</li>
+          <li>One modality of your choice</li>
+          <li>No pre-session intake required</li>
+          <li>Ideal for trying energy healing before committing</li>
+        </ul>
+        <button onclick="openCheckout(1, 'Basic Healing', 'Single 20-min introductory healing session')" class="btn-pkg btn-pkg-line">Book This Session</button>
+      </div>
       <!-- First Light -->
       <div class="pkg-card">
         <div class="pkg-tier">Single Session</div>
@@ -1402,6 +1416,7 @@ footer {
     : PRODUCTION_API_BASE;
 
   const PACKAGES = [
+    { amount: 1, name: 'Basic Healing', note: 'Introductory 20-min session', description: 'Single 20-min introductory healing session', sessions: 1, sessionLabels: ['20-min session'] },
     { amount: 1890, name: 'First Light', note: 'Single 90-min session', description: 'Single 90-min healing session', sessions: 1, sessionLabels: ['90-min session'] },
     { amount: 4490, name: 'Returning Home', note: '3-session arc across 6 weeks', description: '3-session arc: 1×60min + 2×45min sessions across 6 weeks', sessions: 3, sessionLabels: ['60-min session', '45-min session', '45-min session'] },
     { amount: 8790, name: 'Transformation', note: '6-session arc over 3 months', description: '6-session arc: 6×60min sessions over 3 months', sessions: 6, sessionLabels: Array(6).fill('60-min session') }

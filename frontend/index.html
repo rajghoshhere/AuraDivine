@@ -4,60 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aura Divine — Reiki & Angelic Healing with Banani Ghosh</title>
-<meta name="description" content="Reiki & Angelic Healing energy sessions with certified practitioner Banani Ghosh. Chakra balancing, karma healing, money blockage clearing & more — delivered remotely, pan-India.">
-<meta name="keywords" content="Reiki healing, Angelic healing, energy healing India, chakra balancing, karma healing, Banani Ghosh, distance healing session">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://healingauradivine.netlify.app/">
-
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Aura Divine">
-<meta property="og:url" content="https://healingauradivine.netlify.app/">
-<meta property="og:title" content="Aura Divine — Reiki & Angelic Healing with Banani Ghosh">
-<meta property="og:description" content="Energy healing that meets you exactly where you are. Reiki, Angelic Healing & Chakra Balancing sessions delivered remotely, available across India.">
-<meta property="og:image" content="https://healingauradivine.netlify.app/assets/images/og-banner.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:type" content="image/png">
-<meta property="og:locale" content="en_IN">
-
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Aura Divine — Reiki & Angelic Healing with Banani Ghosh">
-<meta name="twitter:description" content="Energy healing that meets you exactly where you are. Reiki, Angelic Healing & Chakra Balancing sessions delivered remotely, available across India.">
-<meta name="twitter:image" content="https://healingauradivine.netlify.app/assets/images/og-banner.png">
-
-<meta name="theme-color" content="#3D1F5C">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%233D1F5C'/%3E%3Ctext x='50' y='67' font-size='58' text-anchor='middle' fill='%23D4AF37' font-family='Georgia,serif'%3EA%3C/text%3E%3C/svg%3E">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  "name": "Aura Divine",
-  "url": "https://healingauradivine.netlify.app/",
-  "image": "https://healingauradivine.netlify.app/assets/images/og-banner.png",
-  "description": "Reiki & Angelic Healing energy sessions with certified practitioner Banani Ghosh, delivered remotely across India.",
-  "areaServed": {
-    "@type": "Country",
-    "name": "India"
-  },
-  "telephone": "+91-6291728230",
-  "priceRange": "₹₹",
-  "founder": {
-    "@type": "Person",
-    "name": "Banani Ghosh",
-    "jobTitle": "Reiki & Angelic Healing Practitioner"
-  },
-  "makesOffer": [
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Usui Reiki Healing" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Angelic Healing" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Money Blockage Clearing" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Protection Healing" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Chakra Balancing" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Karma Healing" } }
-  ]
-}
-</script>
-
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -305,12 +252,27 @@ h2.on-dark em { color: rgba(255,255,255,0.45); }
   position: relative; overflow: hidden;
 }
 .about-img-inner {
-  width: 75%; height: 75%;
+  width: 80%; height: 80%;
   background: linear-gradient(160deg, rgba(61,31,92,0.12), rgba(212,175,55,0.08));
   border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
   display: flex; align-items: center; justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
-.about-img-inner svg { opacity: 0.35; }
+.about-img-inner img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  position: relative;
+  z-index: 2;
+  transform: scale(1.04);
+}
+.about-img-inner svg { 
+  opacity: 0.15;
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
 .about-img::after {
   content: 'Banani Ghosh';
   position: absolute; bottom: 22px; left: 0; right: 0;
@@ -477,7 +439,7 @@ h2.on-dark em { color: rgba(255,255,255,0.45); }
 
 /* ── PACKAGES ── */
 .pkg-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 24px; margin-top: 56px; align-items: start;
 }
 .pkg-card {
@@ -540,6 +502,90 @@ h2.on-dark em { color: rgba(255,255,255,0.45); }
 .btn-pkg-line:hover { background: var(--plum); color: var(--white); }
 .btn-pkg-gold { background: var(--gold); color: var(--plum-dark); border: 1.5px solid var(--gold); }
 .btn-pkg-gold:hover { background: var(--gold-dk); border-color: var(--gold-dk); }
+
+/* ── TEST PACKAGE (hidden unless ?test=1) ── */
+.pkg-card.pkg-test { display: none; border: 1.5px dashed var(--gold-dk); background: #FFFDF5; }
+.pkg-card.pkg-test.show { display: block; }
+.pkg-test-badge {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: var(--plum); color: var(--white); font-size: 9px; font-weight: 800;
+  letter-spacing: 0.16em; text-transform: uppercase; padding: 4px 18px;
+  border-radius: 100px; white-space: nowrap;
+}
+.test-sim-options { margin-bottom: 20px; }
+.test-sim-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--mid); margin-bottom: 8px; }
+.test-sim-option { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--charcoal); padding: 6px 0; cursor: pointer; }
+.test-sim-option input { accent-color: var(--gold-dk); }
+.test-sim-option span { color: var(--mid); font-size: 11.5px; }
+
+/* ── CHECKOUT MODAL ── */
+.checkout-overlay {
+  position: fixed; inset: 0; background: rgba(26,5,51,0.55);
+  display: none; align-items: center; justify-content: center;
+  z-index: 999; padding: 20px; backdrop-filter: blur(3px);
+}
+.checkout-overlay.open { display: flex; }
+.checkout-modal {
+  background: var(--white); border-radius: 8px; max-width: 440px; width: 100%;
+  padding: 36px 32px 32px; position: relative; max-height: 90vh; overflow-y: auto;
+  animation: checkoutIn 0.25s ease;
+}
+@keyframes checkoutIn { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: none; } }
+.checkout-close {
+  position: absolute; top: 14px; right: 14px; width: 32px; height: 32px;
+  border: none; background: transparent; color: var(--mid); font-size: 20px;
+  cursor: pointer; line-height: 1; border-radius: 50%;
+}
+.checkout-close:hover { background: var(--border); color: var(--plum); }
+.checkout-eyebrow { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700; color: var(--deep-lav); margin-bottom: 8px; }
+.checkout-title { font-family: var(--serif); font-size: 24px; color: var(--plum); margin-bottom: 4px; line-height: 1.2; }
+.checkout-desc { font-size: 13px; color: var(--mid); margin-bottom: 20px; line-height: 1.6; }
+.checkout-amount-row { display: flex; justify-content: space-between; align-items: baseline; background: var(--lav-light); border-radius: 6px; padding: 14px 18px; margin-bottom: 24px; }
+.checkout-amount-label { font-size: 12px; color: var(--mid); text-transform: uppercase; letter-spacing: 0.08em; }
+.checkout-amount-value { font-family: var(--serif); font-size: 26px; color: var(--plum); font-weight: 700; }
+.checkout-field { margin-bottom: 16px; }
+.checkout-field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--mid); margin-bottom: 6px; }
+.checkout-field input {
+  width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 4px;
+  font-family: var(--sans); font-size: 14px; color: var(--charcoal); background: var(--ethereal);
+}
+.checkout-field input:focus { outline: none; border-color: var(--gold); }
+.checkout-error { color: #B3261E; font-size: 12.5px; margin: -6px 0 14px; display: none; }
+.checkout-error.show { display: block; }
+.checkout-submit {
+  width: 100%; padding: 15px; border: none; border-radius: 2px; cursor: pointer;
+  background: var(--gold); color: var(--plum-dark); font-family: var(--sans);
+  font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+  transition: all 0.2s;
+}
+.checkout-submit:hover { background: var(--gold-dk); }
+.checkout-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+.checkout-note { font-size: 11px; color: var(--mid); text-align: center; margin-top: 14px; line-height: 1.6; }
+
+.checkout-status { text-align: center; padding: 20px 0 4px; }
+.checkout-status-icon { font-size: 44px; margin-bottom: 16px; }
+.checkout-status.success .checkout-status-icon { color: #3D8B5F; }
+.checkout-status.error .checkout-status-icon { color: #B3261E; }
+.checkout-status h3 { font-family: var(--serif); font-size: 22px; color: var(--plum); margin-bottom: 10px; }
+.checkout-status p { font-size: 13.5px; color: var(--mid); line-height: 1.7; margin-bottom: 20px; }
+
+.checkout-spinner {
+  width: 34px; height: 34px; border: 3px solid var(--border); border-top-color: var(--gold);
+  border-radius: 50%; margin: 6px auto 18px; animation: checkoutSpin 0.8s linear infinite;
+}
+@keyframes checkoutSpin { to { transform: rotate(360deg); } }
+
+.pkg-pick-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 6px; }
+.pkg-pick-item {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  border: 1.5px solid var(--border); border-radius: 6px; padding: 16px 18px;
+  cursor: pointer; transition: all 0.15s; background: var(--white); text-align: left; width: 100%;
+  font-family: var(--sans);
+}
+.pkg-pick-item:hover { border-color: var(--gold); background: var(--champagne); }
+.pkg-pick-name { font-family: var(--serif); font-size: 16px; color: var(--plum); margin-bottom: 2px; }
+.pkg-pick-note { font-size: 11.5px; color: var(--mid); }
+.pkg-pick-price { font-family: var(--serif); font-size: 18px; color: var(--plum); font-weight: 700; white-space: nowrap; }
 
 /* ── FAQ ── */
 .faq-bg { background: var(--lav-light); }
@@ -803,6 +849,7 @@ footer {
     <div class="about-grid">
       <div class="about-img fi">
         <div class="about-img-inner">
+          <img src="assets/images/Banani.ghosh.jpeg" alt="Banani Ghosh">
           <svg viewBox="0 0 120 160" width="110" height="145" fill="none" xmlns="http://www.w3.org/2000/svg">
             <ellipse cx="60" cy="50" rx="28" ry="30" fill="rgba(61,31,92,0.22)"/>
             <path d="M22 160 Q34 112 60 102 Q86 112 98 160" fill="rgba(61,31,92,0.18)"/>
@@ -813,7 +860,7 @@ footer {
       <div class="about-body fi fi-d1">
         <div class="eyebrow eyebrow-lav">About Me</div>
         <h2>I'm Banani Ghosh,<br><em>and I know what it means<br>to lose yourself.</em></h2>
-        <p>After years of high-performance corporate life, I found myself physically well but spiritually depleted. Conventional therapies helped my mind, but my body still held the weight of unprocessed grief, anxiety, and disconnection.</p>
+        <p>My journey into Astrology and Reiki began during a challenging phase of my life while balancing a government career and personal struggles. In search of clarity, healing and direction. Conventional therapies helped my mind, but my body still held the weight of unprocessed grief, anxiety, and disconnection.</p>
         <p>Reiki didn't just heal me — it gave me a language for what I'd been feeling my entire life. I trained under masters in Japan, India, and the UK, earning certifications in Usui Reiki, Angelic Healing, Chakra Balancing, and Trauma-Informed Energy Work.</p>
         <p>Today, I hold space for women who are ready to stop managing their symptoms and start listening to what their energy is actually telling them.</p>
         <div class="pills">
@@ -1036,7 +1083,7 @@ footer {
           <li>Post-session integration guide</li>
           <li>Ideal for first-timers or a specific moment of need</li>
         </ul>
-        <a href="#book" class="btn-pkg btn-pkg-line">Book This Session</a>
+        <button onclick="openCheckout(1890, 'First Light', 'Single 90-min healing session')" class="btn-pkg btn-pkg-line">Book This Session</button>
       </div>
       <!-- Returning Home -->
       <div class="pkg-card featured">
@@ -1051,7 +1098,7 @@ footer {
           <li>Between-session email support</li>
           <li>Space to go deeper and integrate</li>
         </ul>
-        <a href="#book" class="btn-pkg btn-pkg-gold">Begin this Journey</a>
+        <button onclick="openCheckout(4490, 'Returning Home', '3-session arc: 1×60min + 2×45min sessions across 6 weeks')" class="btn-pkg btn-pkg-gold">Begin this Journey</button>
       </div>
       <!-- Transformation -->
       <div class="pkg-card">
@@ -1065,7 +1112,27 @@ footer {
           <li>Integration coaching calls</li>
           <li>Priority scheduling</li>
         </ul>
-        <a href="#book" class="btn-pkg btn-pkg-line">Transform Your Life</a>
+        <button onclick="openCheckout(8790, 'Transformation', '6-session arc: 6×60min sessions over 3 months')" class="btn-pkg btn-pkg-line">Transform Your Life</button>
+      </div>
+      <!-- Test Package (only visible with ?test=1) -->
+      <div class="pkg-card pkg-test" id="testPkgCard">
+        <div class="pkg-test-badge">Testing Only</div>
+        <div class="pkg-tier">Internal QA</div>
+        <div class="pkg-name">Test Session</div>
+        <div class="pkg-price">₹1</div>
+        <div class="pkg-note">Used to verify the live payment flow end-to-end</div>
+        <div class="test-sim-options">
+          <div class="test-sim-label">Simulate package:</div>
+          <label class="test-sim-option"><input type="radio" name="testPkgSim" value="first" checked> First Light <span>(1 session)</span></label>
+          <label class="test-sim-option"><input type="radio" name="testPkgSim" value="returning"> Returning Home <span>(3 sessions)</span></label>
+          <label class="test-sim-option"><input type="radio" name="testPkgSim" value="transformation"> Transformation <span>(6 sessions)</span></label>
+        </div>
+        <ul class="pkg-feats">
+          <li>Confirms live Razorpay checkout works</li>
+          <li>Confirms payment verification &amp; emails</li>
+          <li>Not a real booking — for testing only</li>
+        </ul>
+        <button onclick="runTestCheckout()" class="btn-pkg btn-pkg-line">Run ₹1 Test</button>
       </div>
     </div>
   </div>
@@ -1130,8 +1197,8 @@ footer {
     <h2>You've been waiting<br>long enough.</h2>
     <p>The next session is one decision away. Begin with a free 15-minute clarity call — no pressure, no commitment. Just a conversation about where you are and where healing might take you.</p>
     <div class="ctas">
-      <a href="mailto:banani@auradivine.in" class="btn-primary">Book Your Session</a>
-      <a href="https://wa.me/919999999999?text=Hello%20Banani%2C%20I%27d%20like%20to%20book%20a%20free%20clarity%20call" class="btn-outline" target="_blank" rel="noopener">Free Clarity Call on WhatsApp</a>
+      <button onclick="showPackageSelection()" class="btn-primary" style="border:none;cursor:pointer;font-family:var(--sans)">Book Your Session</button>
+      <a href="https://wa.me/916291728230?text=Hello%20Banani%2C%20I%27d%20like%20to%20book%20a%20free%20clarity%20call" class="btn-outline" target="_blank" rel="noopener">Free Clarity Call on WhatsApp</a>
     </div>
     <div class="trust-row">
       <span class="trust-item">Certified Reiki Master</span>
@@ -1183,12 +1250,61 @@ footer {
 </footer>
 
 <!-- ══ WHATSAPP FLOAT ══ -->
-<a class="wa-float" href="https://wa.me/919999999999?text=Hello%20Banani%2C%20I%27d%20like%20to%20know%20more%20about%20your%20healing%20sessions" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+<a class="wa-float" href="https://wa.me/916291728230?text=Hello%20Banani%2C%20I%27d%20like%20to%20know%20more%20about%20your%20healing%20sessions" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
   <div class="wa-tooltip">Chat on WhatsApp</div>
   <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
   </svg>
 </a>
+
+<!-- ══ PACKAGE PICKER MODAL ══ -->
+<div class="checkout-overlay" id="pkgPickOverlay">
+  <div class="checkout-modal">
+    <button class="checkout-close" onclick="closePkgPicker()" aria-label="Close">&times;</button>
+    <div class="checkout-eyebrow">Healing Journey</div>
+    <div class="checkout-title">Choose your package</div>
+    <p class="checkout-desc">Pick the path that fits where you are right now. You can always add more sessions later.</p>
+    <div class="pkg-pick-list" id="pkgPickList"></div>
+  </div>
+</div>
+
+<!-- ══ CHECKOUT MODAL ══ -->
+<div class="checkout-overlay" id="checkoutOverlay">
+  <div class="checkout-modal">
+    <button class="checkout-close" onclick="closeCheckout()" aria-label="Close">&times;</button>
+
+    <div id="checkoutFormView">
+      <div class="checkout-eyebrow">Secure Checkout</div>
+      <div class="checkout-title" id="checkoutTitle">Book Your Session</div>
+      <p class="checkout-desc" id="checkoutDescription"></p>
+
+      <div class="checkout-amount-row">
+        <span class="checkout-amount-label">Amount Due</span>
+        <span class="checkout-amount-value" id="checkoutAmount">₹0</span>
+      </div>
+
+      <form id="checkoutForm" onsubmit="submitCheckout(event)" novalidate>
+        <div class="checkout-field">
+          <label for="checkoutName">Full Name</label>
+          <input type="text" id="checkoutName" autocomplete="name" required>
+        </div>
+        <div class="checkout-field">
+          <label for="checkoutEmail">Email Address</label>
+          <input type="email" id="checkoutEmail" autocomplete="email" required>
+        </div>
+        <div class="checkout-field">
+          <label for="checkoutPhone">Phone Number</label>
+          <input type="tel" id="checkoutPhone" autocomplete="tel" placeholder="10-digit mobile number" required>
+        </div>
+        <p class="checkout-error" id="checkoutError"></p>
+        <button type="submit" class="checkout-submit" id="checkoutSubmitBtn">Proceed to Payment</button>
+        <p class="checkout-note">Payments are processed securely via Razorpay.<br>Your details are only used for booking confirmation.</p>
+      </form>
+    </div>
+
+    <div id="checkoutStatusView" class="checkout-status" style="display:none"></div>
+  </div>
+</div>
 
 <script>
   // Nav scroll
@@ -1213,6 +1329,324 @@ footer {
     btn.style.background = 'var(--deep-lav)';
     btn.disabled = true;
   }
+
+  // ══ GOOGLE CALENDAR BOOKING (shown after payment so clients can pick a slot) ══
+  const GOOGLE_CALENDAR_BOOKING_LINK = 'https://calendar.app.google/v6jnbfntKJJPqvm77';
+
+  // Appends the payment ID to the customer's name so Banani can match calendar
+  // invites back to payments, and prefills it on Google's booking form if supported.
+  function calendarLinkFor(name, paymentId) {
+    const nameWithPaymentId = paymentId ? `${name || 'Client'} (Payment ${paymentId})` : (name || '');
+    return `${GOOGLE_CALENDAR_BOOKING_LINK}?name=${encodeURIComponent(nameWithPaymentId)}`;
+  }
+
+  // ══ RAZORPAY PAYMENT INTEGRATION ══
+  // Update PRODUCTION_API_BASE to your deployed Render backend URL before going live.
+  const PRODUCTION_API_BASE = 'https://auradivine.onrender.com';
+  const API_BASE = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+    ? 'http://localhost:5000'
+    : PRODUCTION_API_BASE;
+
+  const PACKAGES = [
+    { amount: 1890, name: 'First Light', note: 'Single 90-min session', description: 'Single 90-min healing session', sessions: 1, sessionLabels: ['90-min session'] },
+    { amount: 4490, name: 'Returning Home', note: '3-session arc across 6 weeks', description: '3-session arc: 1×60min + 2×45min sessions across 6 weeks', sessions: 3, sessionLabels: ['60-min session', '45-min session', '45-min session'] },
+    { amount: 8790, name: 'Transformation', note: '6-session arc over 3 months', description: '6-session arc: 6×60min sessions over 3 months', sessions: 6, sessionLabels: Array(6).fill('60-min session') }
+  ];
+
+  // ₹1 test package — visible on the checkout page for verifying the live payment flow
+  document.getElementById('testPkgCard').classList.add('show');
+  PACKAGES.push({ amount: 1, name: 'Test Session', note: '₹1 · Verifies live payment flow', description: '₹1 test transaction — verifies the live payment flow', sessions: 1, sessionLabels: ['test session'] });
+
+  // Lets the test package simulate a real package's session count/labels while only charging ₹1
+  const TEST_SIM_PACKAGES = {
+    first: { label: 'First Light', sessions: 1, sessionLabels: ['90-min session'] },
+    returning: { label: 'Returning Home', sessions: 3, sessionLabels: ['60-min session', '45-min session', '45-min session'] },
+    transformation: { label: 'Transformation', sessions: 6, sessionLabels: Array(6).fill('60-min session') }
+  };
+
+  function runTestCheckout() {
+    const selected = document.querySelector('input[name="testPkgSim"]:checked').value;
+    const sim = TEST_SIM_PACKAGES[selected];
+    openCheckout(
+      1,
+      'Test Session',
+      `₹1 test transaction — simulates ${sim.label} (${sim.sessions} session${sim.sessions > 1 ? 's' : ''})`,
+      sim.sessions,
+      sim.sessionLabels
+    );
+  }
+
+  let activeCheckout = null; // { amount, packageName, description, sessions, sessionLabels }
+
+  // ── Package picker modal (used by the main "Book Your Session" CTA) ──
+  function showPackageSelection() {
+    const list = document.getElementById('pkgPickList');
+    list.innerHTML = '';
+    PACKAGES.forEach(pkg => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'pkg-pick-item';
+      btn.innerHTML = `
+        <span>
+          <span class="pkg-pick-name">${pkg.name}</span>
+          <span class="pkg-pick-note">${pkg.note}</span>
+        </span>
+        <span class="pkg-pick-price">₹${pkg.amount.toLocaleString('en-IN')}</span>
+      `;
+      btn.onclick = () => {
+        closePkgPicker();
+        openCheckout(pkg.amount, pkg.name, pkg.description);
+      };
+      list.appendChild(btn);
+    });
+    document.getElementById('pkgPickOverlay').classList.add('open');
+  }
+
+  function closePkgPicker() {
+    document.getElementById('pkgPickOverlay').classList.remove('open');
+  }
+
+  // ── Checkout modal ──
+  function openCheckout(amount, packageName, description, sessionsOverride, sessionLabelsOverride) {
+    const pkg = PACKAGES.find(p => p.name === packageName);
+    const sessions = sessionsOverride || (pkg ? pkg.sessions : 1);
+    const sessionLabels = sessionLabelsOverride || (pkg ? pkg.sessionLabels : [description]);
+    activeCheckout = { amount, packageName, description, sessions, sessionLabels };
+
+    document.getElementById('checkoutTitle').textContent = packageName;
+    document.getElementById('checkoutDescription').textContent = description;
+    document.getElementById('checkoutAmount').textContent = `₹${amount.toLocaleString('en-IN')}`;
+
+    const form = document.getElementById('checkoutForm');
+    form.reset();
+    hideCheckoutError();
+
+    const submitBtn = document.getElementById('checkoutSubmitBtn');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Proceed to Payment';
+
+    document.getElementById('checkoutFormView').style.display = 'block';
+    document.getElementById('checkoutStatusView').style.display = 'none';
+    document.getElementById('checkoutOverlay').classList.add('open');
+  }
+
+  function closeCheckout() {
+    document.getElementById('checkoutOverlay').classList.remove('open');
+    activeCheckout = null;
+  }
+
+  function showCheckoutError(message) {
+    const el = document.getElementById('checkoutError');
+    el.textContent = message;
+    el.classList.add('show');
+  }
+
+  function hideCheckoutError() {
+    const el = document.getElementById('checkoutError');
+    el.textContent = '';
+    el.classList.remove('show');
+  }
+
+  function showCheckoutStatus({ icon, title, message, retry, pending, calendarLink }) {
+    document.getElementById('checkoutOverlay').classList.add('open');
+    document.getElementById('checkoutFormView').style.display = 'none';
+    const view = document.getElementById('checkoutStatusView');
+    view.className = `checkout-status ${retry ? 'error' : 'success'}`;
+    view.innerHTML = `
+      <div class="checkout-status-icon">${icon}</div>
+      <h3>${title}</h3>
+      <p>${message}</p>
+      ${calendarLink ? `<a href="${calendarLink}" target="_blank" rel="noopener" class="checkout-submit" style="display:block;text-decoration:none;margin-top:8px">Book Your Calendar Now</a>` : ''}
+      ${pending ? '' : retry
+        ? '<button type="button" class="checkout-submit" style="margin-top:10px" onclick="retryCheckout()">Try Again</button>'
+        : '<button type="button" class="checkout-submit" style="margin-top:10px" onclick="closeCheckout()">Done</button>'}
+    `;
+    view.style.display = 'block';
+  }
+
+  function retryCheckout() {
+    if (!activeCheckout) { closeCheckout(); return; }
+    document.getElementById('checkoutFormView').style.display = 'block';
+    document.getElementById('checkoutStatusView').style.display = 'none';
+  }
+
+  async function submitCheckout(event) {
+    event.preventDefault();
+    hideCheckoutError();
+
+    const name = document.getElementById('checkoutName').value.trim();
+    const email = document.getElementById('checkoutEmail').value.trim();
+    const phone = document.getElementById('checkoutPhone').value.trim();
+
+    if (!name) { showCheckoutError('Please enter your full name.'); return; }
+    if (!/^\S+@\S+\.\S+$/.test(email)) { showCheckoutError('Please enter a valid email address.'); return; }
+    if (!/^\d{10}$/.test(phone.replace(/\D/g, '').slice(-10))) { showCheckoutError('Please enter a valid 10-digit phone number.'); return; }
+    const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+
+    const { amount, packageName, description, sessionLabels } = activeCheckout;
+    const submitBtn = document.getElementById('checkoutSubmitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Processing…';
+
+    try {
+      const configResponse = await fetch(`${API_BASE}/api/config`);
+      const configData = await configResponse.json();
+      const hasPlaceholderKey = /your_key_id|rzp_test_your/i.test(configData.razorpayKeyId || '');
+
+      if (!configData.success || !configData.razorpayKeyId || hasPlaceholderKey) {
+        throw new Error('Payments are not configured yet. Please contact support.');
+      }
+
+      const orderResponse = await fetch(`${API_BASE}/api/create-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, packageName, email, phone: cleanPhone })
+      });
+
+      const orderData = await orderResponse.json();
+      if (!orderData.success) {
+        throw new Error(orderData.message || 'Unable to create a payment order.');
+      }
+
+      if (!window.Razorpay) {
+        throw new Error('Razorpay checkout script did not load. Please refresh and try again.');
+      }
+
+      const options = {
+        key: configData.razorpayKeyId,
+        amount: amount * 100,
+        currency: 'INR',
+        order_id: orderData.orderId,
+        name: 'Aura Divine',
+        description,
+        prefill: { name, email, contact: cleanPhone },
+        notes: { package_name: packageName, package_amount: amount },
+        theme: { color: '#D4AF37' },
+        handler: function(response) {
+          handlePaymentSuccess(response, packageName, amount, name, email, cleanPhone, sessionLabels);
+        },
+        modal: {
+          ondismiss: function() {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Proceed to Payment';
+          }
+        }
+      };
+
+      new window.Razorpay(options).open();
+    } catch (error) {
+      console.error('Checkout error:', error);
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Proceed to Payment';
+      showCheckoutError(error.message || 'Unable to start checkout. Please try again.');
+    }
+  }
+
+  function showScheduleStep(name, email, packageName, bookingId, sessionLabels, paymentId) {
+    document.getElementById('checkoutOverlay').classList.add('open');
+    document.getElementById('checkoutFormView').style.display = 'none';
+    const view = document.getElementById('checkoutStatusView');
+    view.className = 'checkout-status success';
+
+    const labels = (sessionLabels && sessionLabels.length) ? sessionLabels : ['your session'];
+    const multi = labels.length > 1;
+    const scheduleButtons = labels.map((label, i) => {
+      const sessionName = multi ? `${name} (Payment ${paymentId}, Session ${i + 1})` : name;
+      return `
+      <a href="${calendarLinkFor(sessionName, multi ? null : paymentId)}" target="_blank" rel="noopener" class="checkout-submit" style="display:block;text-decoration:none;margin-top:${i === 0 ? 8 : 10}px">
+        Book Your Calendar Now${multi ? ` — Session ${i + 1} (${label})` : ''}
+      </a>
+    `;
+    }).join('');
+
+    view.innerHTML = `
+      <div class="checkout-status-icon">✦</div>
+      <h3>Payment Confirmed</h3>
+      <p>Your payment for <strong>${packageName}</strong> is confirmed (Booking ID: ${bookingId}). A confirmation email is on its way to ${email}.</p>
+      <p>${multi ? `Schedule each of your ${labels.length} sessions below` : 'Now pick a time that works for you'} — Banani will meet you then.</p>
+      ${scheduleButtons}
+      <button type="button" class="checkout-submit" style="margin-top:10px;background:transparent;color:var(--mid);border:1.5px solid var(--border)" onclick="closeCheckout()">I'll Schedule Later</button>
+    `;
+    view.style.display = 'block';
+  }
+
+  function handlePaymentSuccess(response, packageName, amount, name, email, phone, sessionLabels) {
+    const paymentId = response.razorpay_payment_id;
+    const calendarLink = calendarLinkFor(name, paymentId);
+
+    showCheckoutStatus({
+      icon: '⟳',
+      title: 'Confirming your payment…',
+      message: `Your payment (ID: ${paymentId}) is being verified — this can take a moment. You don't have to wait for it: go ahead and book your session time now.`,
+      pending: true,
+      calendarLink
+    });
+
+    fetch(`${API_BASE}/api/verify-payment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        paymentId: response.razorpay_payment_id,
+        orderId: response.razorpay_order_id,
+        signature: response.razorpay_signature,
+        package: packageName,
+        amount: amount,
+        email: email,
+        phone: phone
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showScheduleStep(name, email, packageName, data.bookingId, sessionLabels, paymentId);
+        } else {
+          showCheckoutStatus({
+            icon: '!',
+            title: 'Verification Failed',
+            message: 'Your payment could not be verified, but if money was deducted you can still book your session below — we\'ll reconcile the payment on our end. Otherwise contact support with your payment ID.',
+            retry: true,
+            calendarLink
+          });
+        }
+      })
+      .catch(err => {
+        console.error('Verification error:', err);
+        showCheckoutStatus({
+          icon: '!',
+          title: 'Something Went Wrong',
+          message: 'We could not confirm your payment status, but if money was deducted you can still book your session below — we\'ll reconcile the payment on our end.',
+          retry: true,
+          calendarLink
+        });
+      });
+  }
+
+  // Note: no click-outside-to-close on checkoutOverlay — Razorpay's own checkout
+  // overlay sits on top of ours, and a stray click as it closes after a successful
+  // payment can land on our backdrop and trigger closeCheckout(), wiping out the
+  // post-payment scheduling step before the customer ever sees it.
+  document.getElementById('pkgPickOverlay').addEventListener('click', e => {
+    if (e.target.id === 'pkgPickOverlay') closePkgPicker();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeCheckout(); closePkgPicker(); }
+  });
+
+  // Surface any otherwise-silent JS error on screen while checkout is mid-flow,
+  // instead of the modal just going blank/closing with no explanation.
+  function reportCheckoutCrash(message) {
+    const overlay = document.getElementById('checkoutOverlay');
+    if (overlay && (overlay.classList.contains('open') || activeCheckout)) {
+      showCheckoutStatus({
+        icon: '!',
+        title: 'Unexpected Error',
+        message: `Something broke after your payment: ${message}. Please screenshot this and contact support — your payment may still have gone through.`,
+        retry: true
+      });
+    }
+  }
+  window.addEventListener('error', e => reportCheckoutCrash(e.message));
+  window.addEventListener('unhandledrejection', e => reportCheckoutCrash((e.reason && e.reason.message) || e.reason));
 </script>
 </body>
 </html>

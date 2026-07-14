@@ -4,6 +4,60 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aura Divine — Reiki & Angelic Healing with Banani Ghosh</title>
+<meta name="description" content="Reiki & Angelic Healing energy sessions with certified practitioner Banani Ghosh. Chakra balancing, karma healing, money blockage clearing & more — delivered remotely, pan-India.">
+<meta name="keywords" content="Reiki healing, Angelic healing, energy healing India, chakra balancing, karma healing, Banani Ghosh, distance healing session">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://healingauradivine.netlify.app/">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Aura Divine">
+<meta property="og:url" content="https://healingauradivine.netlify.app/">
+<meta property="og:title" content="Aura Divine — Reiki & Angelic Healing with Banani Ghosh">
+<meta property="og:description" content="Energy healing that meets you exactly where you are. Reiki, Angelic Healing & Chakra Balancing sessions delivered remotely, available across India.">
+<meta property="og:image" content="https://healingauradivine.netlify.app/assets/images/og-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta property="og:locale" content="en_IN">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Aura Divine — Reiki & Angelic Healing with Banani Ghosh">
+<meta name="twitter:description" content="Energy healing that meets you exactly where you are. Reiki, Angelic Healing & Chakra Balancing sessions delivered remotely, available across India.">
+<meta name="twitter:image" content="https://healingauradivine.netlify.app/assets/images/og-banner.png">
+
+<meta name="theme-color" content="#3D1F5C">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%233D1F5C'/%3E%3Ctext x='50' y='67' font-size='58' text-anchor='middle' fill='%23D4AF37' font-family='Georgia,serif'%3EA%3C/text%3E%3C/svg%3E">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Aura Divine",
+  "url": "https://healingauradivine.netlify.app/",
+  "image": "https://healingauradivine.netlify.app/assets/images/og-banner.png",
+  "description": "Reiki & Angelic Healing energy sessions with certified practitioner Banani Ghosh, delivered remotely across India.",
+  "areaServed": {
+    "@type": "Country",
+    "name": "India"
+  },
+  "telephone": "+91-6291728230",
+  "priceRange": "₹₹",
+  "founder": {
+    "@type": "Person",
+    "name": "Banani Ghosh",
+    "jobTitle": "Reiki & Angelic Healing Practitioner"
+  },
+  "makesOffer": [
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Usui Reiki Healing" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Angelic Healing" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Money Blockage Clearing" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Protection Healing" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Chakra Balancing" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Karma Healing" } }
+  ]
+}
+</script>
+
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1353,9 +1407,12 @@ footer {
     { amount: 8790, name: 'Transformation', note: '6-session arc over 3 months', description: '6-session arc: 6×60min sessions over 3 months', sessions: 6, sessionLabels: Array(6).fill('60-min session') }
   ];
 
-  // ₹1 test package — visible on the checkout page for verifying the live payment flow
-  document.getElementById('testPkgCard').classList.add('show');
-  PACKAGES.push({ amount: 1, name: 'Test Session', note: '₹1 · Verifies live payment flow', description: '₹1 test transaction — verifies the live payment flow', sessions: 1, sessionLabels: ['test session'] });
+  // ₹1 test package — only shown when visiting with ?test=1, so real visitors never see it
+  const testMode = new URLSearchParams(window.location.search).get('test') === '1';
+  if (testMode) {
+    document.getElementById('testPkgCard').classList.add('show');
+    PACKAGES.push({ amount: 1, name: 'Test Session', note: '₹1 · Verifies live payment flow', description: '₹1 test transaction — verifies the live payment flow', sessions: 1, sessionLabels: ['test session'] });
+  }
 
   // Lets the test package simulate a real package's session count/labels while only charging ₹1
   const TEST_SIM_PACKAGES = {

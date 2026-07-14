@@ -1464,9 +1464,12 @@ footer {
     { amount: 8790, name: 'Transformation', note: '6-session arc over 3 months', description: '6-session arc: 6×60min sessions over 3 months', sessions: 6, sessionLabels: Array(6).fill('60-min session'), calLink: 'banani-ghosh-8wtlof/transformation' }
   ];
 
-  // ₹1 test package — visible on the checkout page for verifying the live payment flow
-  document.getElementById('testPkgCard').classList.add('show');
-  PACKAGES.push({ amount: 1, name: 'Test Session', note: '₹1 · Verifies live payment flow', description: '₹1 test transaction — verifies the live payment flow', sessions: 1, sessionLabels: ['test session'], calLink: 'banani-ghosh-8wtlof/first-light' });
+  // ₹1 test package — only shown when visiting with ?test=1, so real visitors never see it
+  const testMode = new URLSearchParams(window.location.search).get('test') === '1';
+  if (testMode) {
+    document.getElementById('testPkgCard').classList.add('show');
+    PACKAGES.push({ amount: 1, name: 'Test Session', note: '₹1 · Verifies live payment flow', description: '₹1 test transaction — verifies the live payment flow', sessions: 1, sessionLabels: ['test session'], calLink: 'banani-ghosh-8wtlof/first-light' });
+  }
 
   // Lets the test package simulate a real package's session count/labels/calLink while only charging ₹1
   const TEST_SIM_PACKAGES = {
